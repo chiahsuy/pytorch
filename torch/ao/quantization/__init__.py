@@ -34,3 +34,8 @@ from .fuse_modules import (
     fuse_modules,
     get_fuser_method,
 )  # noqa: F401
+
+from .quant_type import (
+    QuantType,
+    quant_type_to_str,
+)
