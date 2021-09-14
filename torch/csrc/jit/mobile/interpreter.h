@@ -1,13 +1,13 @@
 #pragma once
 #include <ATen/core/ivalue.h>
 #include <ATen/core/operator_name.h>
+#include <torch/csrc/jit/mobile/prim_ops_registery.h>
 #include <torch/csrc/jit/runtime/instruction.h>
 #include <vector>
 
 namespace torch {
 namespace jit {
 namespace mobile {
-using Stack = std::vector<c10::IValue>;
 using DebugHandle = int64_t;
 struct InstructionWithDebugHandle {
   InstructionWithDebugHandle(Instruction inst, DebugHandle handle)
@@ -46,6 +46,21 @@ struct InterpreterState {
 // since this is a thread local variable and setting it for
 // every instruction will add overhead of thread local variable access.
 int64_t getInterpretersExceptionPC();
+
+class prim_ops {
+  std::string prim_ops_name_;
+  std::string prim_ops_schema_;
+
+ public:
+  prim_ops(
+      const std::string& name,
+      const std::string& schema,
+      const std::function<void(Stack&)>& fn)
+      : prim_ops_name_(name), prim_ops_schema_(schema) {
+    registerPrimOpsFunction(name, schema, fn);
+  }
+};
+
 } // namespace mobile
 } // namespace jit
 } // namespace torch
